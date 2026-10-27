@@ -203,6 +203,30 @@ curl -X POST https://YOUR-HOST/api/v1/payments -H "Authorization: Bearer ml_..."
   -d '{"transaction_id":"txn_1","amount":29.99,"currency":"USD","visitor_id":"<ml_vid cookie>","email":"jane@acme.com"}'
 ```
 
+## AI crawlers (AI visibility)
+
+The dashboard's **AI crawlers** card shows which AI assistants, search crawlers and training bots read your pages, split
+into three tabs:
+
+- **AI answers**: fetched live because someone asked an AI a question (ChatGPT-User, Claude-User, Perplexity-User, DuckAssistBot…)
+- **Indexing**: search crawlers building the index AI answers draw on (OAI-SearchBot, Claude-SearchBot, PerplexityBot, Googlebot, Bingbot…)
+- **Training**: crawlers collecting data to train models (GPTBot, ClaudeBot, Amazonbot, Meta-ExternalAgent, CCBot…)
+
+Each tab has a daily chart per crawler or per page, a crawler/page filter and a ranked list. The full list of
+user agents is in `src/shared/crawlers.ts`.
+
+Crawlers don't run JavaScript, so the tracker can't see them: your server reports them with the site's API key.
+Settings → AI crawlers has a copy-paste Vercel middleware; from any other server:
+
+```bash
+curl -X POST https://YOUR-HOST/api/v1/crawlers -H "Authorization: Bearer ml_..." -H "Content-Type: application/json" \
+  -d '{"ua":"<User-Agent header>","path":"/pricing?via=app"}'
+```
+
+Unknown user agents are ignored, and up to 100 hits can be sent at once as `{"hits":[{"ua","path","ts"}]}`. Counts are
+what each request *claims* to be (user agents aren't verified against the companies' IP ranges), and Google answers
+in Gemini mostly fetch as the regular Googlebot, so Gemini's "AI answers" count is partial.
+
 ## Accuracy notes
 
 No analytics tool is 100% accurate. These are the main gaps and how this project handles them:

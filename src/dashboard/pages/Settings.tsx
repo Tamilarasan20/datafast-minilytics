@@ -3,6 +3,7 @@ import { navigate } from '../App';
 import { Favicon } from '../components/Icons';
 import { buildAiPrompt } from '../lib/aiPrompt';
 import { api, type Site } from '../lib/api';
+import { CRAWLER_PREFILTER } from '../../shared/crawlers';
 
 function Section({ title, desc, children }: { title: string; desc?: ReactNode; children: ReactNode }) {
   return (
@@ -238,6 +239,46 @@ curl -X POST ${origin}/api/v1/goals \\
   -H "Authorization: Bearer ${site.api_key}" \\
   -H "Content-Type: application/json" \\
   -d '{"visitor_id":"<ml_vid cookie>","name":"signup"}'`}</Code>
+      </Section>
+
+      <Section
+        title="AI crawlers"
+        desc="See which AI assistants, search crawlers and training bots read your pages. Crawlers don't run JavaScript, so your server reports them with this site's API key."
+      >
+        <p className="mb-2 text-sm text-stone-600">
+          Vercel (any framework): add <code>middleware.ts</code> at the project root, run <code>npm i @vercel/functions</code>, and set{' '}
+          <code>MINILYTICS_API_KEY</code> in the project's environment variables.
+        </p>
+        <Code>{`import { next, waitUntil } from '@vercel/functions';
+
+// Likely crawlers only; Minilytics ignores user agents it doesn't know.
+const CRAWLER = ${CRAWLER_PREFILTER.toString()};
+
+export default function middleware(request: Request) {
+  const ua = request.headers.get('user-agent') ?? '';
+  const key = process.env.MINILYTICS_API_KEY;
+  if (key && CRAWLER.test(ua)) {
+    const url = new URL(request.url);
+    waitUntil(
+      fetch('${origin}/api/v1/crawlers', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ua, path: url.pathname + url.search }),
+      }).catch(() => {}),
+    );
+  }
+  return next();
+}
+
+export const config = {
+  // Pages plus robots.txt / sitemap.xml / llms.txt; skip scripts, styles, images and fonts.
+  matcher: ['/((?!assets/|.*\\\\.(?:js|css|map|png|jpe?g|gif|svg|webp|avif|ico|woff2?|ttf|mp4|webm)$).*)'],
+};`}</Code>
+        <p className="mb-2 mt-4 text-sm text-stone-600">Any other server:</p>
+        <Code>{`curl -X POST ${origin}/api/v1/crawlers \\
+  -H "Authorization: Bearer ${site.api_key}" \\
+  -H "Content-Type: application/json" \\
+  -d '{"ua":"<User-Agent header>","path":"/pricing?via=app"}'`}</Code>
       </Section>
 
       <LinkBuilder domain={site.domain} />

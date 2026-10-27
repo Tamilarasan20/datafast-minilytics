@@ -4,6 +4,7 @@ import { handleEvent } from './collect';
 import { forgetSite, type AppEnv, type Site } from './env';
 import { clearSession, currentUser, googleCallback, googleStart, isHosted, requireUser, setSession, siteAccessSql } from './auth';
 import { billingWebhook, checkout, planInfo } from './billing';
+import { crawlerStats, handleCrawlerApi, parseCrawlerQuery } from './crawlers';
 import { passwordsMatch, randomId } from './lib/crypto';
 import { handleDodoWebhook, handleGoalApi, handlePaymentApi, rematchPayments } from './payments';
 import { breakdown, customers, funnel, makeCtx, overview, realtime, visitorProfile, visitors, type FunnelStep } from './stats';
@@ -19,6 +20,7 @@ app.post('/api/event', handleEvent);
 app.post('/api/webhooks/dodo/:siteId', handleDodoWebhook);
 app.post('/api/v1/payments', handlePaymentApi);
 app.post('/api/v1/goals', handleGoalApi);
+app.post('/api/v1/crawlers', handleCrawlerApi);
 
 // ---------- login
 
@@ -194,7 +196,7 @@ app.post('/api/sites/:id/rotate-key', async (c) => {
 app.delete('/api/sites/:id', async (c) => {
   const id = c.get('site').id;
   await c.env.DB.batch(
-    ['events', 'sessions', 'visitors', 'payments', 'funnels'].map((t) =>
+    ['events', 'sessions', 'visitors', 'payments', 'funnels', 'crawler_hits'].map((t) =>
       c.env.DB.prepare(`DELETE FROM ${t} WHERE site_id = ?`).bind(id),
     ).concat(c.env.DB.prepare('DELETE FROM sites WHERE id = ?').bind(id)),
   );
@@ -213,6 +215,8 @@ app.get('/api/sites/:id/breakdown', async (c) => {
     return c.json({ error: (e as Error).message }, 400);
   }
 });
+
+app.get('/api/sites/:id/crawlers', async (c) => c.json(await crawlerStats(makeCtx(c), parseCrawlerQuery(c.req.query()))));
 
 app.post('/api/sites/:id/rematch', async (c) => c.json(await rematchPayments(c.env.DB, c.get('site'))));
 app.get('/api/sites/:id/realtime', async (c) => c.json(await realtime(c.env.DB, c.get('site'))));
