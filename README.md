@@ -227,6 +227,32 @@ Unknown user agents are ignored, and up to 100 hits can be sent at once as `{"hi
 what each request *claims* to be (user agents aren't verified against the companies' IP ranges), and Google answers
 in Gemini mostly fetch as the regular Googlebot, so Gemini's "AI answers" count is partial.
 
+## Ask an AI assistant (MCP)
+
+Every site has a read-only [MCP](https://modelcontextprotocol.io) server at `https://YOUR-HOST/api/mcp`, authenticated with
+the site's API key, so Claude, Cursor and other MCP clients can answer questions like "which sources made money this month?"
+or "is ChatGPT reading our pricing page?". Settings → AI assistants (MCP) has copy-paste setup:
+
+```bash
+claude mcp add --transport http minilytics https://YOUR-HOST/api/mcp --header "Authorization: Bearer ml_..."
+```
+
+Clients that can't send headers (e.g. a claude.ai custom connector) can use `https://YOUR-HOST/api/mcp/ml_...`; that URL
+contains the key, so keep it private.
+
+| Tool | What it returns |
+|---|---|
+| `get_site` | Name, domain, timezone, currency |
+| `get_overview` | Visitors, revenue, conversion… vs the previous period, plus a time series |
+| `get_breakdown` | Top channels, sources, campaigns, pages, countries, devices, goals, outbound links… with revenue |
+| `get_realtime` | Who is on the site now and the last 30 minutes of activity |
+| `get_customers` | Payments with what brought each buyer |
+| `list_funnels` / `get_funnel` | Saved or ad-hoc funnels with step conversion |
+| `get_ai_crawlers` | AI answers / indexing / training crawler hits by crawler or page |
+
+All tools take an optional `period` (`today`, `7d`, `30d`, `90d`, `12m`, `all`, or `custom` with `from`/`to`) and, where it
+makes sense, `filters` such as `{"channel":"AI"}`. Amounts are in major units of the site currency.
+
 ## Accuracy notes
 
 No analytics tool is 100% accurate. These are the main gaps and how this project handles them:
