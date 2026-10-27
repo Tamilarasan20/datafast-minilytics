@@ -281,6 +281,25 @@ export const config = {
   -d '{"ua":"<User-Agent header>","path":"/pricing?via=app"}'`}</Code>
       </Section>
 
+      <Section
+        title="AI assistants (MCP)"
+        desc="Ask Claude, Cursor or any MCP client about this site's traffic, revenue, funnels and AI crawlers. Read-only; it uses this site's API key."
+      >
+        <p className="mb-2 text-sm text-stone-600">Claude Code:</p>
+        <Code>{`claude mcp add --transport http minilytics ${origin}/api/mcp --header "Authorization: Bearer ${site.api_key}"`}</Code>
+        <p className="mb-2 mt-4 text-sm text-stone-600">
+          Claude (claude.ai or desktop) → Settings → Connectors → <b>Add custom connector</b>, with this URL. It contains the key, so treat it
+          like a password:
+        </p>
+        <Code>{`${origin}/api/mcp/${site.api_key}`}</Code>
+        <p className="mb-2 mt-4 text-sm text-stone-600">Cursor and other clients (mcp.json):</p>
+        <Code>{JSON.stringify({ mcpServers: { minilytics: { url: `${origin}/api/mcp`, headers: { Authorization: `Bearer ${site.api_key}` } } } }, null, 2)}</Code>
+        <p className="mt-3 text-sm text-stone-500">
+          Tools: site details, overview, breakdown by any dimension, realtime, customers and attribution, funnels, AI crawlers. Rotating the
+          API key disconnects every assistant using it.
+        </p>
+      </Section>
+
       <LinkBuilder domain={site.domain} />
 
       <Section title="General">

@@ -2,9 +2,7 @@ import type { Context } from 'hono';
 import { classifyCrawler, crawlerDomain, CRAWLER_CATEGORIES, type CrawlerCategory } from '../shared/crawlers';
 import type { AppEnv, Site } from './env';
 import { bucketLabels, bucketSql } from './lib/time';
-import type { makeCtx } from './stats';
-
-type Ctx = ReturnType<typeof makeCtx>;
+import type { Ctx } from './stats';
 
 const MAX_BATCH = 100;
 /** Lines drawn on the chart; the list on the right shows more. */
