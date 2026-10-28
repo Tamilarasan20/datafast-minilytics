@@ -208,18 +208,18 @@ export function CrawlersCard() {
           {data && (
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
-                <CartesianGrid vertical={false} stroke="#efedea" strokeDasharray="4 4" />
+                <CartesianGrid vertical={false} stroke="rgb(var(--chart-grid))" strokeDasharray="4 4" />
                 <XAxis
                   dataKey="bucket"
                   tickFormatter={(b) => bucketLabel(b, g)}
-                  tick={{ fill: '#a8a29e', fontSize: 12 }}
+                  tick={{ fill: 'rgb(var(--stone-400))', fontSize: 12 }}
                   axisLine={false}
                   tickLine={false}
                   minTickGap={24}
                 />
-                <YAxis tick={{ fill: '#a8a29e', fontSize: 12 }} axisLine={false} tickLine={false} width={40} allowDecimals={false} />
+                <YAxis tick={{ fill: 'rgb(var(--stone-400))', fontSize: 12 }} axisLine={false} tickLine={false} width={40} allowDecimals={false} />
                 <Tooltip
-                  cursor={{ stroke: '#d6d3d1' }}
+                  cursor={{ stroke: 'rgb(var(--stone-300))' }}
                   content={({ active, payload, label }) => {
                     if (!active || !payload?.length) return null;
                     const items = payload
@@ -259,7 +259,7 @@ export function CrawlersCard() {
                     stroke={l.color}
                     strokeWidth={2}
                     dot={false}
-                    activeDot={{ r: 4, stroke: '#fff', strokeWidth: 2 }}
+                    activeDot={{ r: 4, stroke: 'rgb(var(--surface))', strokeWidth: 2 }}
                     isAnimationActive={false}
                   />
                 ))}
@@ -272,7 +272,7 @@ export function CrawlersCard() {
           {data && rows.length === 0 && <p className="p-6 text-center text-sm text-stone-400">No data for this period</p>}
           {rows.map((r) => {
             const i = data!.keys.indexOf(r.key);
-            const color = i >= 0 ? colorFor(r.key, i, byCrawler) : '#d6d3d1';
+            const color = i >= 0 ? colorFor(r.key, i, byCrawler) : 'rgb(var(--stone-300))';
             return (
               <div key={r.key} className="relative flex h-10 items-center rounded-lg" title={r.key}>
                 <div
