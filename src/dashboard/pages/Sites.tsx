@@ -3,6 +3,7 @@ import { navigate, useMe } from '../App';
 import { Favicon } from '../components/Icons';
 import { Logo } from '../components/Logo';
 import { Modal } from '../components/Modal';
+import { ThemeToggle } from '../components/ThemeToggle';
 import { api, type Site } from '../lib/api';
 import { fmtNumber } from '../lib/format';
 
@@ -34,6 +35,7 @@ export function Sites() {
               {me.user.email}
             </button>
           )}
+          <ThemeToggle className="btn h-[38px] w-[38px] px-0" />
           <button className="btn" onClick={logout}>
             Log out
           </button>

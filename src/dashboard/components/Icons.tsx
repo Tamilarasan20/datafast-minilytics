@@ -109,7 +109,7 @@ export function Avatar({ id, size = 40 }: { id: string; size?: number }) {
   const p = persona(id);
   return (
     <span
-      className="inline-flex shrink-0 items-center justify-center rounded-full ring-2 ring-white"
+      className="inline-flex shrink-0 items-center justify-center rounded-full ring-2 ring-surface"
       style={{ width: size, height: size, background: p.color, fontSize: size * 0.55 }}
       title={p.name}
     >

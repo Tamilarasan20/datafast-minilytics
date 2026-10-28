@@ -327,14 +327,14 @@ export const config = {
       </Section>
 
       {(saved || error) && (
-        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 rounded-xl px-4 py-2 text-sm text-white shadow-lg ${error ? 'bg-red-600' : 'bg-ink'}`}>
+        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 rounded-xl px-4 py-2 text-sm shadow-lg ${error ? 'bg-red-600 text-white' : 'bg-ink text-paper'}`}>
           {error || saved}
         </div>
       )}
 
       <Section title="Danger zone">
         <button
-          className="btn border-red-200 text-red-600"
+          className="btn border-red-200 text-red-600 dark:border-red-900 dark:text-red-400"
           onClick={async () => {
             if (prompt(`Type ${site.domain} to delete this site and all of its data`) !== site.domain) return;
             await api(`/api/sites/${siteId}`, { method: 'DELETE' });
@@ -354,7 +354,7 @@ function AiSetup({ site, origin }: { site: Site; origin: string }) {
   const [open, setOpen] = useState(false);
   const prompt = buildAiPrompt(site, origin);
   return (
-    <section className="card border-violet-200 bg-gradient-to-br from-violet-50 to-white p-6">
+    <section className="card border-violet-200 bg-gradient-to-br from-violet-50 to-surface dark:border-violet-900 dark:from-violet-950/50 p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold">✨ Set up with AI</h2>
@@ -374,7 +374,7 @@ function AiSetup({ site, origin }: { site: Site; origin: string }) {
           {copied ? '✓ Copied' : 'Copy AI prompt'}
         </button>
       </div>
-      <button className="mt-3 text-sm font-medium text-violet-700 hover:underline" onClick={() => setOpen((o) => !o)}>
+      <button className="mt-3 text-sm font-medium text-violet-700 hover:underline dark:text-violet-300" onClick={() => setOpen((o) => !o)}>
         {open ? 'Hide prompt' : 'Preview prompt'}
       </button>
       {open && <pre className="code mt-3 max-h-96 whitespace-pre-wrap">{prompt}</pre>}
