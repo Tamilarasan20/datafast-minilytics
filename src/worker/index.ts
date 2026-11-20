@@ -6,6 +6,7 @@ import { clearSession, currentUser, googleCallback, googleStart, isHosted, requi
 import { billingWebhook, checkout, planInfo } from './billing';
 import { crawlerStats, handleCrawlerApi, parseCrawlerQuery } from './crawlers';
 import { handleMcp } from './mcp';
+import { statsBreakdownApi, statsOverviewApi } from './api-stats';
 import { passwordsMatch, randomId } from './lib/crypto';
 import { handleDodoWebhook, handleGoalApi, handlePaymentApi, rematchPayments } from './payments';
 import { breakdown, customers, funnel, makeCtx, overview, realtime, visitorProfile, visitors, type FunnelStep } from './stats';
@@ -22,6 +23,9 @@ app.post('/api/webhooks/dodo/:siteId', handleDodoWebhook);
 app.post('/api/v1/payments', handlePaymentApi);
 app.post('/api/v1/goals', handleGoalApi);
 app.post('/api/v1/crawlers', handleCrawlerApi);
+// Read-only stats for servers, with the site API key (same numbers as the dashboard).
+app.get('/api/v1/stats/overview', statsOverviewApi);
+app.get('/api/v1/stats/breakdown', statsBreakdownApi);
 
 // MCP server for AI assistants (read-only, authenticated with the site API key).
 const mcpCors = cors({
